@@ -4,64 +4,43 @@ A Docker image for periodical backups of Laravel's `storage/app` folder to Googl
 
 ## Usage
 
-### Run via Docker
+### Kubernetes Cluster
 
-```bash
-docker run \
- -e GCS_KEY_FILE_PATH=/gc-service-account.json \
- -e GCS_BUCKET=<GC bucket name> \
- --mount type=bind,source=/path/to/keyfile,target=/gc-service-account.json \
- --mount type=bind,source=/path/to/storage,target=/laravel-storage-gc-backup/storage \
- dazlabteam/laravel-storage-gc-backup
-```
-
-### Run via Docker Compose
-
-Edit your Docker Compose file, add new `laravel-storage-backup` service:
-
-```yaml
-  laravel-storage-backup:
-    image: dazlabteam/laravel-storage-gc-backup
-    environment:
-      GCS_KEY_FILE_PATH: <path to GC service account key file>
-      GCS_BUCKET: <GC bucket name>
-```
-
-Then run
-
-```bash
-docker-compose -f <path to docker compose yaml> run --rm laravel-storage-backup
-```
-
-or by specifying env variables via the command line:
-
-```bash
-docker-compose -f <path to docker compose yaml> run --rm \
- -e GCS_KEY_FILE_PATH=<path to GC service account key file> \
- -e GCS_BUCKET=<GC bucket name> \
- laravel-storage-backup
-```
-
-### Schedule inside Kubernetes Cluster
-
-Create Kubernetes secret containing all the environment variables:
+1. Create Kubernetes secret containing the GC service account JSON key:
 
 ```bash
 kubectl create secret generic laravel-storage-gc-backup \
- --from-literal=GCS_KEY_FILE_PATH=<path to GC service account key file> \
- --from-literal=GCS_BUCKET=<GC bucket name>
+ --from-file=gc-service-account.json=/path/to/keyfile.json
 ```
 
-then create CronJob using the cronjob spec file from this repo:
+2. Add a new sidecar container to the existing Laravel image deployment:
 
-```
-kubectl apply -f laravel-storage-gc-backup.cronjob.yaml
+```yaml
+  containers:
+  - name: laravel-storage-gc-backup
+    image: dazlabteam/laravel-storage-gc-backup
+    env:
+      - name: GCS_BUCKET
+        value: <GC bucket name>
+    volumeMounts:
+      - name: gc-service-account
+        readOnly: true
+        mountPath: /gc-service-account.json
+        subPath: gc-service-account.json
+  volumes:
+  - name: gc-service-account
+    secret:
+      secretName: laravel-storage-gc-backup
 ```
 
-By default, it will run every day at 00:00. To change this, edit cronjob and specify other schedule:
+By default, it will run every day at 00:00. To change this, specify `CRON_EXPR` env variable:
 
-```
-kubectl edit cronjob laravel-storage-gc-backup
+```yaml
+  image: dazlabteam/laravel-storage-gc-backup
+  env:
+    ...
+    - name: CRON_EXPR
+    value: 0 1 * * *
 ```
 
 ## License
