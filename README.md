@@ -76,5 +76,4 @@ MIT
 
 - https://hub.docker.com/r/dazlabteam/laravel-storage-gc-backup
 - https://kubernetes.io/docs/tasks/inject-data-application/distribute-credentials-secure/
-- https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
  
