@@ -6,13 +6,13 @@ if [ "${GCS_KEY_FILE_PATH}" = "" ]; then
   GCS_KEY_FILE_PATH=/gc-service-account.json
 fi
 
-if [ "${BACKUP_PATH}" = "" ]; then
-  BACKUP_PATH=storage/app
-fi
-
 if [ ! -f "${GCS_KEY_FILE_PATH}" ]; then
   echo "${GCS_KEY_FILE_PATH} must point to a file"
   exit 1
+fi
+
+if [ "${BACKUP_PATH}" = "" ]; then
+  BACKUP_PATH=storage/app
 fi
 
 if [ -z "${GCS_BUCKET}" ]; then
