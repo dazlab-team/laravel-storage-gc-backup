@@ -19,6 +19,7 @@ kubectl create secret generic laravel-storage-gc-backup \
   containers:
   - name: laravel-storage-gc-backup
     image: dazlabteam/laravel-storage-gc-backup
+    imagePullPolicy: Always
     env:
       - name: GCS_BUCKET
         value: <GC bucket name>
