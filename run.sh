@@ -2,6 +2,10 @@
 
 set -e
 
+if [ "${GCS_KEY_FILE_PATH}" = "" ]; then
+  GCS_KEY_FILE_PATH=/gc-service-account.json
+fi
+
 if [ "${BACKUP_PATH}" = "" ]; then
   BACKUP_PATH=storage/app
 fi
