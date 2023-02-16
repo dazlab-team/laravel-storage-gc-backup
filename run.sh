@@ -2,6 +2,24 @@
 
 set -e
 
+while getopts ":k:b:p:" opt; do
+  case ${opt} in
+  b)
+    GCS_BUCKET=$OPTARG
+    ;;
+  p)
+    BACKUP_PATH=$OPTARG
+    ;;
+  k)
+    GCS_KEY_FILE_PATH=$OPTARG
+    ;;
+  *)
+    echo "Invalid Option: -$OPTARG" 1>&2
+    ;;
+  esac
+done
+
+
 if [ "${GCS_KEY_FILE_PATH}" = "" ]; then
   GCS_KEY_FILE_PATH=/gc-service-account.json
 fi
