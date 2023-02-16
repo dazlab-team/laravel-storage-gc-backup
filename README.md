@@ -40,7 +40,7 @@ By default, it will run every day at 00:00. To change this, specify `CRON_EXPR` 
   env:
     ...
     - name: CRON_EXPR
-    value: 0 1 * * *
+      value: 0 1 * * *
 ```
 
 ## License
