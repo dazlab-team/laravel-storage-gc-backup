@@ -17,21 +17,21 @@ kubectl create secret generic laravel-storage-gc-backup \
 
 ```yaml
   containers:
-  - name: laravel-storage-gc-backup
-    image: dazlabteam/laravel-storage-gc-backup
-    imagePullPolicy: Always
-    env:
-      - name: GCS_BUCKET
-        value: <GC bucket name>
-    volumeMounts:
-      - name: gc-service-account
-        readOnly: true
-        mountPath: /gc-service-account.json
-        subPath: gc-service-account.json
+    - name: laravel-storage-gc-backup
+      image: dazlabteam/laravel-storage-gc-backup
+      imagePullPolicy: Always
+      env:
+        - name: GCS_BUCKET
+          value: <GC bucket name>
+      volumeMounts:
+        - name: gc-service-account
+          readOnly: true
+          mountPath: /gc-service-account.json
+          subPath: gc-service-account.json
   volumes:
-  - name: gc-service-account
-    secret:
-      secretName: laravel-storage-gc-backup
+    - name: gc-service-account
+      secret:
+        secretName: laravel-storage-gc-backup
 ```
 
 By default, it will run every day at 00:00. To change this, specify `CRON_EXPR` env variable:
@@ -39,9 +39,33 @@ By default, it will run every day at 00:00. To change this, specify `CRON_EXPR` 
 ```yaml
   image: dazlabteam/laravel-storage-gc-backup
   env:
-    ...
     - name: CRON_EXPR
       value: 0 1 * * *
+```
+
+#### Backup path and prefix
+
+The two variables can be specified for setting the custom storage path and a custom prefix for a resulting backup
+archive:
+
+```yaml
+  image: dazlabteam/laravel-storage-gc-backup
+  env:
+    - name: BACKUP_PATH
+      value: /path/to/laravel/storage
+    - name: BACKUP_PREFIX
+      value: my-custom-archive
+```
+
+#### Other options
+
+##### Custom path to GC system account key file
+
+```yaml
+  image: dazlabteam/laravel-storage-gc-backup
+  env:
+    - name: GCS_KEY_FILE_PATH
+      value: /my-system-account.json
 ```
 
 ## License
