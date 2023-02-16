@@ -17,5 +17,7 @@ if [ "${GCS_BUCKET}" = "" ]; then
   exit 1
 fi
 
+echo "Schedule backup to ${GCS_BUCKET}: ${CRON_EXPR}"
+
 # start cron
 /usr/sbin/crond -f -l 8
