@@ -36,7 +36,7 @@ DATE=$(date -u "+%F-%H%M%S")
 ARCHIVE_NAME="${BACKUP_PREFIX}-${DATE}.tar.gz"
 
 echo "Backing up ${BACKUP_PATH}"
-tar czfP "${ARCHIVE_NAME}" ${BACKUP_PATH}
+tar czf "${ARCHIVE_NAME}" ${BACKUP_PATH} 2>&1
 echo "Uploading ${ARCHIVE_NAME} to ${GCS_BUCKET}"
 
 gcloud auth activate-service-account --quiet --key-file="${GCS_KEY_FILE_PATH}"
